@@ -1,0 +1,1 @@
+# ansible-omnibus-objectserver-agg-base-install

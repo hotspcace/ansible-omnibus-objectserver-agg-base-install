@@ -1,12 +1,5 @@
 ---
-PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/IBM:/opt/IBM/tivoli/netcool:/opt/IBM/tivoli/netcool/omnibus"
+PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/netcool:/opt/IBM:/opt/IBM/tivoli/netcool:/opt/IBM/tivoli/netcool/omnibus"
 CONFIGS_HOME: "/opt/accuoss/omnibus/configs/objectserver"
 NCHOME: "/opt/IBM/tivoli/netcool"
 OMNIHOME: "/opt/IBM/tivoli/netcool/omnibus"
-ncpass: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          31323335626462643231363035386132396164353432373936306231343432663231353031336162
-          3763663734333365366433313635316333393036616533630a336533653933393231343161386464
-          32626231376433363066663334303634373361393432386536626134663964336362356335373366
-          6435383131396631330a623466393461333139363133356261373164643435393239333239363234
-          6662

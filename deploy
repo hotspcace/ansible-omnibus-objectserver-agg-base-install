@@ -1,200 +1,202 @@
-#!/bin/bash
-#set -x
-#Note, assumes that the correct vault.pw.dev, vault.pw.preprod and vault.pw.prod are in the user's home directory as well as having AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY defined either in env variables or in
+##!/bin/bash
+##set -x
+##Note, assumes that the correct vault.pw.dev, vault.pw.preprod and vault.pw.prod are in the user's home directory as well as having AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY defined either in env variables or in
 PLAYBOOK="ansible-omnibus-objectserver-agg-base-install.yml"
-i#CREDS="creds.sh"
-WORKSPACE="temp_workspace"
-TMPSPACE="ansible_temp"
-PRE_LOG_FILE="/home/$USER/prelog.log"
->$PRE_LOG_FILE
-
-echo "########################################################" >> $PRE_LOG_FILE
-echo " Start of deploy script logging" >> $PRE_LOG_FILE
-echo "########################################################" >> $PRE_LOG_FILE
-echo " " >> $PRE_LOG_FILE
-
-objsrv="AGG_P"
-NCO_PA_ID='AGG_P_PA'
-#ha_target_subnet="primary"
-#ENVIRONMENT="dev"
-#GITENVIRONMENT="dev"
-#DOMAIN="dev.nms.viasat.io"
-ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
-#VAULT_FILE="/home/$USER/vault.pw.dev"
-#vpw="vault.pw_dev"
-VARS_FILE="group_vars/${PLAYBOOK}"
-MY_VARS_FILE=${echo $VARS_FILE}
-SQLFILE="roles/ansible-omnibus-objectserver-agg-base-install/files/adduser_sql"
-
-#if [[ -z "$tmpenv" ]]
-#then
-#        tmpenv=$(mktemp -t checklist.XXXXXXXXX)
-#        trap 'rm -f "$tmpenv"' EXIT
-#        trap 'exit 127' HUP STOP TERM
-#        dialog --ascii-lines --title "Deployment Environment" --clear --radiolist "Select the deployment environment" 0 0 0 "dev" "Development" off "preprod" "Pre Production" off "prod" "Production" off 2> "$tmpenv"
-#        retval=$?
-#        input=$(cat "$tmpenv")
-#        case $retval in
-#                0)      tmpenv=$(echo "$input")
-#                        echo "$tmpenv" > tmpenv
-#			echo "Variable tmpenv: $tmpenv" >> $PRE_LOG_FILE
-#                        ;;
-#                1)      echo "Cancel was pressed."
-#                        ;;
-#        esac
+PLAYBOOK_PATH=$(find / -name $PLAYBOOK | grep -w "ansible-omnibus-objectserver-agg-base-install" | grep -v roles | grep -v group_vars | grep -v pre_ | grep -v bkp_)
+##CREDS="creds.sh"
+#WORKSPACE="temp_workspace"
+#TMPSPACE="ansible_temp"
+##PRE_LOG_FILE="/home/$USER/prelog.log"
+##>$PRE_LOG_FILE
+##
+##echo "########################################################" >> $PRE_LOG_FILE
+##echo " Start of deploy script logging" >> $PRE_LOG_FILE
+##echo "########################################################" >> $PRE_LOG_FILE
+##echo " " >> $PRE_LOG_FILE
+##
+##objsrv="AGG_P"
+##NCO_PA_ID='AGG_P_PA'
+###ha_target_subnet="primary"
+##ENVIRONMENT="dev"
+##GITENVIRONMENT="dev"
+##DOMAIN="dev.nms.viasat.io"
+##ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
+##VAULT_FILE="/home/$USER/vault.pw.dev"
+##vpw="vault.pw_dev"
+##VARS_FILE="group_vars/${PLAYBOOK}"
+##MY_VARS_FILE=${echo $VARS_FILE}
+##SQLFILE="roles/ansible-omnibus-objectserver-agg-base-install/files/adduser_sql"
 #
-#        tmpenv=${tmpenv,,}    # tolower
-#else
-#        echo "tempenv variable is already defined"
-#fi
+##if [[ -z "$tmpenv" ]]
+##then
+##        tmpenv=$(mktemp -t checklist.XXXXXXXXX)
+##        trap 'rm -f "$tmpenv"' EXIT
+##        trap 'exit 127' HUP STOP TERM
+##        dialog --ascii-lines --title "Deployment Environment" --clear --radiolist "Select the deployment environment" 0 0 0 "dev" "Development" off "preprod" "Pre Production" off "prod" "Production" off 2> "$tmpenv"
+##        retval=$?
+##        input=$(cat "$tmpenv")
+##        case $retval in
+##                0)      tmpenv=$(echo "$input")
+##                        echo "$tmpenv" > tmpenv
+##			echo "Variable tmpenv: $tmpenv" >> $PRE_LOG_FILE
+##                        ;;
+##                1)      echo "Cancel was pressed."
+##                        ;;
+##        esac
+##
+##        tmpenv=${tmpenv,,}    # tolower
+##else
+##        echo "tempenv variable is already defined"
+##fi
+##
+##if [ "$tmpenv" = "dev" ]
+##then
+##        objsrv="AGG_P"
+##	NCO_PA_ID='AGG_P_PA'
+##        ha_target_subnet="primary"
+##	ENVIRONMENT="dev"
+##	GITENVIRONMENT="dev"
+##	DOMAIN="dev.nms.viasat.io"
+##        ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
+##	VAULT_FILE="/home/$USER/vault.pw.dev"
+##	vpw="vault.pw_dev"
+##	VARS_FILE="group_vars/${ENVIRONMENT}-${PLAYBOOK}"
+##	MY_VARS_FILE="${ENVIRONMENT}-${PLAYBOOK}"
+##	ec2_instance_type="t2.large"
+##        SQLFILE="roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/dev_adduser_sql"
+##	myenv=${ENVIRONMENT}
+##	GITBASEREPO="git@git.viasat.com:NMSTools/ansible_base.git"
+##	GITENVREPO="git@git.viasat.com:NMSTools/ansible_environment_dev.git"
 #
-#if [ "$tmpenv" = "dev" ]
-#then
-#        objsrv="AGG_P"
-#	NCO_PA_ID='AGG_P_PA'
-#        ha_target_subnet="primary"
-#	ENVIRONMENT="dev"
-#	GITENVIRONMENT="dev"
-#	DOMAIN="dev.nms.viasat.io"
-#        ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
-#	VAULT_FILE="/home/$USER/vault.pw.dev"
-#	vpw="vault.pw_dev"
-#	VARS_FILE="group_vars/${ENVIRONMENT}-${PLAYBOOK}"
-#	MY_VARS_FILE="${ENVIRONMENT}-${PLAYBOOK}"
-#	ec2_instance_type="t2.large"
-#        SQLFILE="roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/dev_adduser_sql"
-#	myenv=${ENVIRONMENT}
-#	GITBASEREPO="git@git.viasat.com:NMSTools/ansible_base.git"
-#	GITENVREPO="git@git.viasat.com:NMSTools/ansible_environment_dev.git"
-
-#elif [ "$tmpenv" = "preprod" ]
-#then
-#        objsrv="AGG_P"
-#        NCO_PA_ID='AGG_P_PA'
-#        ha_target_subnet="primary"
-#	ENVIRONMENT="preprod"
-#	GITENVIRONMENT="preprod"
-#	DOMAIN="preprod.nms.viasat.io"
-#        ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
-#	VAULT_FILE="/home/$USER/vault.pw.preprod"
-#	ec2_instance_type="m4.2xlarge"
-#	vpw="vault.pw_preprod"
-#	MY_VARS_FILE="${ENVIRONMENT}-${PLAYBOOK}"
-#	VARS_FILE="group_vars/${ENVIRONMENT}-${PLAYBOOK}"
-#	SQLFILE="roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/preprod_adduser_sql"
-#	myenv=${ENVIRONMENT}
-#	GITBASEREPO="git@git.viasat.com:NMSTools/ansible_base.git"
-#	GITENVREPO="git@git.viasat.com:NMSTools/ansible_environment_preprod.git"
-
-#elif [ "$tmpenv" = "prod" ]
-#then
-#        objsrv="AGG_P"
-#        NCO_PA_ID='AGG_P_PA'
-#        ha_target_subnet="primary"
-#	ENVIRONMENT="prod"
-#	GITENVIRONMENT="production"
-#	DOMAIN="nms.viasat.io"
-#	ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
-#	VAULT_FILE="/home/$USER/vault.pw.prod"
-#	ec2_instance_type="m4.2xlarge"
-#	vpw="vault.pw_prod"
-#	VARS_FILE="group_vars/${ENVIRONMENT}-${PLAYBOOK}"
-#	MY_VARS_FILE="${ENVIRONMENT}-${PLAYBOOK}"
-#	SQLFILE="roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/prod_adduser_sql"
-#	myenv=${ENVIRONMENT}
-#	GITBASEREPO="git@git.viasat.com:NMSTools/ansible_base.git"
-#	GITENVREPO="git@git.viasat.com:NMSTools/ansible_environment_production.git"
-#else
-#        echo "You did not enter dev or pre or prod. This script will exit now. Please try again."
-#        sleep 3
-#        exit 1
-#fi
-
-        echo "Variable objsrv: $objsrv" >> $PRE_LOG_FILE
-        echo "Variable NCO_PA_ID: $NCO_PA_ID" >> $PRE_LOG_FILE
-        echo "Variable DOMAIN: $DOMAIN" >> $PRE_LOG_FILE
-        echo "Variable ansible_hostname: $ansible_hostname" >> $PRE_LOG_FILE
-        echo "Variable VARS_FILE: $VARS_FILE" >> $PRE_LOG_FILE
-        echo "Variable MY_VARS_FILE: $MY_VARS_FILE" >> $PRE_LOG_FILE
-        echo "Variable SQLFILE: $SQLFILE" >> $PRE_LOG_FILE
-
-smyhostname="omnibus-objsrv-agg.${DOMAIN},"
-target="omnibus-objsrv-agg,"
-
-        echo "Variable smyhostname: $smyhostname" >> $PRE_LOG_FILE
-        echo "Variable target: $target" >> $PRE_LOG_FILE
-
-        echo " " >> $PRE_LOG_FILE
-        echo "Starting the workspace processing" >> $PRE_LOG_FILE
-########################################
-# Start the processing in the workspace
-########################################
-
-        if [[ -d "$TMPSPACE" ]]
-        then
-                echo "Removing $TMPSPACE if it exists" >> $PRE_LOG_FILE
-                rm -rf "$TMPSPACE"
-        elif [[ -d "$WORKSPACE" ]]
-        then
-                echo "Removing $WORKSPACE if it exists" >> $PRE_LOG_FILE
-                rm -rf "$WORKSPACE"
-        else
-                echo "No directories to remove" >> $PRE_LOG_FILE
-        fi
-		echo "Creating new tmp directories" >> $PRE_LOG_FILE
-		mkdir -p "$TMPSPACE"
-		mkdir -p "$WORKSPACE"
-		echo "Change to ansible_temp directory" >> $PRE_LOG_FILE
-		cd "$TMPSPACE"
-
-
-		echo "Copying ansible_base to the workspace" >> $PRE_LOG_FILE
-		cp -R ansible_base/* ../$WORKSPACE/
-
-    echo "Downloading ansible-omnibus-master-configs repo from git" >> $PRE_LOG_FILE
-    git clone git@git.viasat.com:NMSTools/ansible-omnibus-master-configs.git || exit
-
-		echo "Copying roles and group_vars for $PLAYBOOK to the workspace" >> $PRE_LOG_FILE
-		cp -R ../module_ansible/* ../$WORKSPACE/
-
-    echo "Copying ansible-omnibus-master-configs files to the workspace" >> $PRE_LOG_FILE
-    cp ansible-omnibus-master-configs/${tmpenv}/omnibus-objsrv-agg-primary.${DOMAIN}/files/* ../temp_workspace/roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/
-    cp ansible-omnibus-master-configs/${tmpenv}/omnibus-objsrv-agg-primary.${DOMAIN}/templates/* ../temp_workspace/roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/templates/
-
-		echo "Copy property to ansible.cfg" >> $PRE_LOG_FILE
-		echo "deprecation_warnings=False >> ../${WORKSPACE}/ansible.cfg" >> $PRE_LOG_FILE
-		echo "Changing dir to $TMPSPACE" >> $PRE_LOG_FILE
-		cd ../"$TMPSPACE"
-    LOG_FILE="~/ansible-playbook_objectserver_base-install_${MYDATE}.log"
-
-		echo "launching ansible playbook - $PLAYBOOK" >> $PRE_LOG_FILE
-		echo " " >> $PRE_LOG_FILE
-		echo "########################################################" >> $PRE_LOG_FILE
-		echo "End of deploy script logging" >> $PRE_LOG_FILE
-		echo "########################################################" >> $PRE_LOG_FILE
-		echo " " >> $PRE_LOG_FILE
-		echo "########################################################" >> $PRE_LOG_FILE
-		echo "Start of Ansible Playbook logging" >> $PRE_LOG_FILE
-		echo "########################################################" >> $PRE_LOG_FILE
-		echo " " >> $PRE_LOG_FILE
-
-
-		ansible-playbook -v -i $smyhostname $PLAYBOOK -e "target=$smyhostname objsrv=$objsrv my_vars_file=$MY_VARS_FILE playrun_user=$PLAYRUN_USER smyhostname=$smyhostname nco_pa_id=$NCO_PA_ID ansible_hostname=$ansible_hostname DOMAIN=$DOMAIN mydomain=$DOMAIN" 2>&1 | tee $LOG_FILE
-
-
-			echo "Changing dir to one level back" >> $LOG_FILE
-			cd ../
-			echo "Removing $TMPSPACE directory" >> $LOG_FILE
-			rm -rf "$TMPSPACE"
-			echo "Removing $WORKSPACE directory" >> $LOG_FILE
-			rm -rf "$WORKSPACE"
-			echo "$LOG_FILE_MESSAGE"
-			echo "Removing tmp files" >> $LOG_FILE
-			rm -f tmp*
-			echo " " >> $LOG_FILE
-			echo "########################################################" >> $LOG_FILE
-			echo "End of Ansible Playbook logging" >> $PRE_LOG_FILE
-			echo "########################################################" >> $LOG_FILE
-
-			cat $PRE_LOG_FILE | cat - $LOG_FILE > /tmp/out && mv /tmp/out $LOG_FILE
-			rm -f $PRE_LOG_FILE
+##elif [ "$tmpenv" = "preprod" ]
+##then
+##        objsrv="AGG_P"
+##        NCO_PA_ID='AGG_P_PA'
+##        ha_target_subnet="primary"
+##	ENVIRONMENT="preprod"
+##	GITENVIRONMENT="preprod"
+##	DOMAIN="preprod.nms.viasat.io"
+##        ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
+##	VAULT_FILE="/home/$USER/vault.pw.preprod"
+##	ec2_instance_type="m4.2xlarge"
+##	vpw="vault.pw_preprod"
+##	MY_VARS_FILE="${ENVIRONMENT}-${PLAYBOOK}"
+##	VARS_FILE="group_vars/${ENVIRONMENT}-${PLAYBOOK}"
+##	SQLFILE="roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/preprod_adduser_sql"
+##	myenv=${ENVIRONMENT}
+##	GITBASEREPO="git@git.viasat.com:NMSTools/ansible_base.git"
+##	GITENVREPO="git@git.viasat.com:NMSTools/ansible_environment_preprod.git"
+#
+##elif [ "$tmpenv" = "prod" ]
+##then
+##        objsrv="AGG_P"
+##        NCO_PA_ID='AGG_P_PA'
+##        ha_target_subnet="primary"
+##	ENVIRONMENT="prod"
+##	GITENVIRONMENT="production"
+##	DOMAIN="nms.viasat.io"
+##	ansible_hostname="omnibus-objsrv-agg-primary.${DOMAIN}"
+##	VAULT_FILE="/home/$USER/vault.pw.prod"
+##	ec2_instance_type="m4.2xlarge"
+##	vpw="vault.pw_prod"
+##	VARS_FILE="group_vars/${ENVIRONMENT}-${PLAYBOOK}"
+##	MY_VARS_FILE="${ENVIRONMENT}-${PLAYBOOK}"
+##	SQLFILE="roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/prod_adduser_sql"
+##	myenv=${ENVIRONMENT}
+##	GITBASEREPO="git@git.viasat.com:NMSTools/ansible_base.git"
+##	GITENVREPO="git@git.viasat.com:NMSTools/ansible_environment_production.git"
+##else
+##        echo "You did not enter dev or pre or prod. This script will exit now. Please try again."
+##        sleep 3
+##        exit 1
+##fi
+#
+##        echo "Variable objsrv: $objsrv" >> $PRE_LOG_FILE
+##        echo "Variable NCO_PA_ID: $NCO_PA_ID" >> $PRE_LOG_FILE
+##        echo "Variable DOMAIN: $DOMAIN" >> $PRE_LOG_FILE
+##        echo "Variable ansible_hostname: $ansible_hostname" >> $PRE_LOG_FILE
+##        echo "Variable VARS_FILE: $VARS_FILE" >> $PRE_LOG_FILE
+##        echo "Variable MY_VARS_FILE: $MY_VARS_FILE" >> $PRE_LOG_FILE
+##        echo "Variable SQLFILE: $SQLFILE" >> $PRE_LOG_FILE
+#
+##smyhostname="omnibus-objsrv-agg.${DOMAIN},"
+##target="omnibus-objsrv-agg,"
+#
+##        echo "Variable smyhostname: $smyhostname" >> $PRE_LOG_FILE
+##        echo "Variable target: $target" >> $PRE_LOG_FILE
+##
+##        echo " " >> $PRE_LOG_FILE
+##        echo "Starting the workspace processing" >> $PRE_LOG_FILE
+#########################################
+## Start the processing in the workspace
+#########################################
+#
+#        if [[ -d "$TMPSPACE" ]]
+#        then
+#                echo "Removing $TMPSPACE if it exists" >> $PRE_LOG_FILE
+#                rm -rf "$TMPSPACE"
+#        elif [[ -d "$WORKSPACE" ]]
+#        then
+#                echo "Removing $WORKSPACE if it exists" >> $PRE_LOG_FILE
+#                rm -rf "$WORKSPACE"
+#        else
+#                echo "No directories to remove" >> $PRE_LOG_FILE
+#        fi
+#		echo "Creating new tmp directories" >> $PRE_LOG_FILE
+#		mkdir -p "$TMPSPACE"
+#		mkdir -p "$WORKSPACE"
+#		echo "Change to ansible_temp directory" >> $PRE_LOG_FILE
+#		cd "$TMPSPACE"
+#
+#
+#		echo "Copying ansible_base to the workspace" >> $PRE_LOG_FILE
+#		cp -R ansible_base/* ../$WORKSPACE/
+#
+#    echo "Downloading ansible-omnibus-master-configs repo from git" >> $PRE_LOG_FILE
+#    git clone git@git.viasat.com:NMSTools/ansible-omnibus-master-configs.git || exit
+#
+#		echo "Copying roles and group_vars for $PLAYBOOK to the workspace" >> $PRE_LOG_FILE
+#		cp -R ../module_ansible/* ../$WORKSPACE/
+#
+#    echo "Copying ansible-omnibus-master-configs files to the workspace" >> $PRE_LOG_FILE
+#    cp ansible-omnibus-master-configs/${tmpenv}/omnibus-objsrv-agg-primary.${DOMAIN}/files/* ../temp_workspace/roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/files/
+#    cp ansible-omnibus-master-configs/${tmpenv}/omnibus-objsrv-agg-primary.${DOMAIN}/templates/* ../temp_workspace/roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/templates/
+#
+#		echo "Copy property to ansible.cfg" >> $PRE_LOG_FILE
+#		echo "deprecation_warnings=False >> ../${WORKSPACE}/ansible.cfg" >> $PRE_LOG_FILE
+#		echo "Changing dir to $TMPSPACE" >> $PRE_LOG_FILE
+#		cd ../"$TMPSPACE"
+#    LOG_FILE="~/ansible-playbook_objectserver_base-install_${MYDATE}.log"
+#
+#		echo "launching ansible playbook - $PLAYBOOK" >> $PRE_LOG_FILE
+#		echo " " >> $PRE_LOG_FILE
+#		echo "########################################################" >> $PRE_LOG_FILE
+#		echo "End of deploy script logging" >> $PRE_LOG_FILE
+#		echo "########################################################" >> $PRE_LOG_FILE
+#		echo " " >> $PRE_LOG_FILE
+#		echo "########################################################" >> $PRE_LOG_FILE
+#		echo "Start of Ansible Playbook logging" >> $PRE_LOG_FILE
+#		echo "########################################################" >> $PRE_LOG_FILE
+#		echo " " >> $PRE_LOG_FILE
+#
+	ansible-playbook -i 10.160.100.119, $PLAYBOOK_PATH --ask-become-pass
+#
+#		ansible-playbook -v -i $smyhostname $PLAYBOOK -e "target=$smyhostname objsrv=$objsrv my_vars_file=$MY_VARS_FILE playrun_user=$PLAYRUN_USER smyhostname=$smyhostname nco_pa_id=$NCO_PA_ID ansible_hostname=$ansible_hostname DOMAIN=$DOMAIN mydomain=$DOMAIN" 2>&1 | tee $LOG_FILE
+#
+#
+#			echo "Changing dir to one level back" >> $LOG_FILE
+#			cd ../
+#			echo "Removing $TMPSPACE directory" >> $LOG_FILE
+#			rm -rf "$TMPSPACE"
+#			echo "Removing $WORKSPACE directory" >> $LOG_FILE
+#			rm -rf "$WORKSPACE"
+#			echo "$LOG_FILE_MESSAGE"
+#			echo "Removing tmp files" >> $LOG_FILE
+#			rm -f tmp*
+#			echo " " >> $LOG_FILE
+#			echo "########################################################" >> $LOG_FILE
+#			echo "End of Ansible Playbook logging" >> $PRE_LOG_FILE
+#			echo "########################################################" >> $LOG_FILE
+#
+#			cat $PRE_LOG_FILE | cat - $LOG_FILE > /tmp/out && mv /tmp/out $LOG_FILE
+#			rm -f $PRE_LOG_FILE

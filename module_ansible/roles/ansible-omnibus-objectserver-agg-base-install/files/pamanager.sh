@@ -5,7 +5,7 @@ MYHOST=`hostname -f`
 if [[ "$MYHOST" =~ webgui ]]
 then
         NCO_PA_ID="WEBGUI"
-elif [[ "$MYHOST" =~ agg-primary ]]
+elif [[ "$MYHOST" =~ segra-objectserver ]]
 then
         NCO_PA_ID="AGG_P_PA"
 elif [[ "$MYHOST" =~ agg-backup ]]
@@ -28,8 +28,8 @@ fi
 
 
 PA=${NCO_PA_ID}
-PAUSER='omniadmin'
-PAPASSWORD='ECBBBJAGFKFHGD'
+PAUSER='netcool'
+PAPASSWORD='ECBBBJAGFKBIGD'
 
 export PA PAUSER PAPASSWORD
 export LINES TLINES HLINES PATEXT PASERVICES PAPROCESSES STOP_SERVICE

@@ -1,0 +1,307 @@
+#!/bin/bash
+set -x
+# Source function library.
+#. /etc/init.d/functions
+
+# Source networking configuration.
+#. /etc/sysconfig/network
+
+# Check that networking is up? If it is not we exit here.
+#[ ${NETWORKING} = "no" ] && exit 0
+MYHOST="segra-objectserver"
+
+if [[ "$MYHOST" == 'omnibus-webgui01.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-webgui01.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-webgui01.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="WEBGUI"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/webgui
+        VLOGSHOME=/opt/accuoss/omnibus/logs/webgui
+elif [[ "$MYHOST" == 'segra-objectserver' || "$MYHOST" == 'omnibus-objsrv-agg-primary.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-objsrv-agg-primary.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="AGG_P_PA"
+        NCO_ID="AGG_P"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/objectserver
+        VLOGSHOME=/opt/accuoss/omnibus/logs/objectserver
+elif [[ "$MYHOST" == 'omnibus-objsrv-agg-backup.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-objsrv-agg-backup.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-objsrv-agg-backup.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="AGG_B_PA"
+        NCO_ID="AGG_B"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/objectserver
+        VLOGSHOME=/opt/accuoss/omnibus/logs/objectserver
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-consul.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-consul.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-consul.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_C_PA"
+        NCO_ID="MTTRAPD01_C"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd02-consul.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd02-consul.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd02-consul.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD02_C_PA"
+        NCO_ID="MTTRAPD02_C"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-master.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-master.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-master.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_M_PA"
+        NCO_ID="MTTRAPD01_M"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-slave.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-slave.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-slave.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_S_PA"
+        NCO_ID="MTTRAPD01_S"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-master.preprod.euw01.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-master.euw01.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_M_EU_PA"
+        NCO_ID="MTTRAPD01_M_EU"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-slave.preprod.euw01.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-slave.euw01.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_S_EU_PA"
+        NCO_ID="MTTRAPD01_S_EU"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-master.preprod.aps01.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-master.aps01.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_M_AP_PA"
+        NCO_ID="MTTRAPD01_M_AP"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-mttrapd01-slave.preprod.aps01.nms.accuoss.io' || "$MYHOST" == 'omnibus-mttrapd01-slave.aps01.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="MTTRAPD01_S_AP_PA"
+        NCO_ID="MTTRAPD01_S_AP"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-mttrapd
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-mttrapd
+        NC_RULES_HOME=/opt/accuoss/omnibus/rules
+        NC_RULES_FILE="mttrapd.rules"
+elif [[ "$MYHOST" == 'omnibus-socket01-consul.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-socket01-consul.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-socket01-consul.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="SOCKET01_C_PA"
+        NCO_ID="SOCKET01_C"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-socket
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-socket
+        NC_RULES_HOME=/opt/accuoss/omnibus/configs/probe-socket
+        NC_RULES_FILE="socket.rules"
+elif [[ "$MYHOST" == 'omnibus-socket02-consul.dev.nms.accuoss.io' || "$MYHOST" == 'omnibus-socket02-consul.preprod.nms.accuoss.io' || "$MYHOST" == 'omnibus-socket02-consul.nms.accuoss.io' ]]
+then
+        NCO_PA_ID="SOCKET02_C_PA"
+        NCO_ID="SOCKET02_C"
+        CONFIGSHOME=/opt/accuoss/omnibus/configs/probe-socket
+        VLOGSHOME=/opt/accuoss/omnibus/logs/probe-socket
+        NC_RULES_HOME=/opt/accuoss/omnibus/configs/probe-socket
+        NC_RULES_FILE="socket.rules"
+
+fi
+# Variables that can be changed
+START_NCO=Y                                     # Start nco_pad
+NCHOME=/opt/IBM/tivoli/netcool                  # Set directory for $NCHOME
+OMNIHOME=/opt/IBM/tivoli/netcool/omnibus        # Set directory for $OMNIHOME
+SECURE=n                                        # Y/N run Process Agent in secure mode
+NETCOOL_LICENSE_FILE=27000@localhost            # Points to flex license server
+
+export NCO_PA_ID NCO_ID CONFIGSHOME VLOGSHOME NC_RULES_HOME NC_RULES_FILE NCHOME OMNIHOME NETCOOL_LICENSE_FILE
+
+if [ ! -d $OMNIHOME/bin ]; then
+        # $OMNIHOME/bin doesnt exist
+        echo "directory $OMNIHOME/bin: does not exist, nco not starting"
+        exit
+fi
+pidlist() {
+local thispid=$1
+local fulllist=
+local childlist=
+childlist=$(ps --ppid $thispid -o pid h)
+for pid in $childlist
+do
+  fulllist="$(pidlist $pid) $fulllist"
+done
+echo "$thispid $fulllist"
+}
+killpad() {
+        # Find all PAD processes
+        pad_pids=`/bin/ps -ef | grep -v grep | grep nco_pad | awk '{print $2}' | sort -n`
+        count=0
+        while [ "$pad_pids" != "" -a $count -lt 10 ]
+        do
+                child_list=""
+                for parent_pid in $pad_pids
+                do
+                        children=`ps -ejf | grep -v nco_pad | awk '$3 == pid {print $4}' pid=$parent_pid | sort -nru`
+                        child_list="$child_list $children"
+                done
+                # Kill PADs first to prevent them from re-starting children
+                kill $pad_pids
+                # Kill child processes and all other processes that share their process group id's.
+                for gid in $child_list
+                do
+                        #[ "$gid" != "" ] && kill -TERM -$gid
+                        [ "$gid" != "" ] && kill -9 $(pidlist ${gid})
+                        #[ "$gid" != "" ] && kill -9 -$gid
+                done
+
+                # In case PAD daemons weren't killed in the right order
+                # get the ones that have come alive again.
+                # This will happen if the orginal PAD pid's span
+                # across pid wrap around.
+                count=`expr $count + 1`
+                sleep 10
+                pad_pids=`/bin/ps -ef | grep -v grep | grep nco_pad | awk '{print $2}' | sort -n`
+        done
+}
+
+killproc() {            # kill the named process(es)
+        pid=`/bin/ps -ef | grep -v grep | grep $1 | awk '{print $2}'`
+        [ "$pid" != "" ] && kill -TERM $pid
+}
+# Start/stop NCO processes
+case "$1" in
+'start')
+        case "$START_NCO" in
+                'Y')
+                        if [ -x $OMNIHOME/bin/nco_pad ]; then
+                                grep ${NCO_PA_ID} ${CONFIGSHOME}/omni.dat >/dev/null 2>/dev/null
+                                if [ $? -eq 0 ]; then
+                                        [ "$BOOTUP" != "verbose" ] && echo -n "Netcool/OMNIbus : Starting Process Control ..."
+                                        if [ "$SECURE" = "Y" ]; then
+                                                #${OMNIHOME}/bin/nco_pad -name ${NCO_PA_ID} -authenticate PAM -secure > /dev/null 2> /dev/null
+						su - netcool -c "/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P_PA - authenticate UNIX -secure > /dev/null 2> /dev/null"
+					else
+						/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P_PA -propsfile ${CONFIGSHOME}/AGG_P_PA.props -configfile ${CONFIGSHOME}/AGG_P_PA.conf > /dev/null 2> /dev/null
+						#/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P -DNS 10.160.100.119 -propsfile ${CONFIGSHOME}/AGG_P_PA.props - authenticate UNIX -user netcool -password n3tc00l > /dev/null 2> /dev/null
+
+						#/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name ${NCO_PA_ID} -DNS 10.160.100.119 -propsfile ${CONFIGSHOME}/${NCO_PA_ID}.props -authenticate UNIX -secure > /dev/null 2> /dev/null
+                                        #else
+                                                #/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name ${NCO_PA_ID} -DNS 10.160.100.119 -propsfile ${CONFIGSHOME}/${NCO_PA_ID}.props -authenticate UNIX > /dev/null 2> /dev/null
+                                        fi
+                                        sleep 2
+                                        PID=`ps auxwww | grep nco_pad | grep ${NCO_PA_ID} | grep -v grep | awk '{print $2}'`
+                                        if [ "$PID" != "" ]; then
+                                               echo "PAD processes have been started successfully."
+                                        else
+                                               echo "PAD processes did not start."
+                                        fi
+                                        [ "$BOOTUP" != "verbose" ] && echo
+                                else
+                                        [ "$BOOTUP" != "verbose" ] && echo "Netcool/OMNIbus : Process Control not configured"
+                                fi
+                        else
+                                echo "Netcool/OMNIbus : nco_pad is not executable"
+                        fi
+                        ;;
+                'N')
+                        [ "$BOOTUP" != "verbose" ] && echo "Netcool/OMNIbus : Process Control not starting"
+                        ;;
+                *)
+                        echo "Netcool/OMNIbus : START_NCO incorrectly set"
+                        ;;
+        esac
+        ;;
+
+'stop')
+        PID=`ps auxwww | grep nco_pad | grep -v grep | awk '{print $2}'`
+        if [ "$PID" != "" ]; then
+                [ "$BOOTUP" != "verbose" ] && echo -n "Netcool/OMNIbus : Stopping Process Control ..."
+                killpad
+                if [ $? -eq 0 ]
+		then
+			if [ "${NCO_PA_ID}" == 'AGG_P_PA' ]
+			then
+				mypad=$(pidof nco_pad)
+				myobj=$(pidof nco_objserv)
+				myffgate=$(pidof nco_g_file)
+				script_pids_file="/tmp/my_script_pids"
+				all_pids_file="/tmp/my_pids"
+				>$script_pids_file
+				>$all_pids_file
+				script_pids_count=$(cat /tmp/script_pid_file|wc -l)
+				script_pids=$(cat $script_pids_file)
+				script_pids=$(cat $script_pids_file)
+				all_pids=$(cat $all_pids_file)
+				ps -ef|grep omni_trigger_stats2idb.sh|grep -v grep|cut -d" " -f7 >> ${script_pids_file}
+				ps -ef|grep tail|grep -v grep|cut -d" " -f7 >> ${script_pids_file}
+				ps -ef|grep omni_ff2idb.sh|grep -v grep|cut -d" " -f7 >> ${script_pids_file}
+				ps -ef|grep omni_profiler_stats2idb.sh|grep -v grep|cut -d" " -f7 >> ${script_pids_file}
+				${mypad} >> ${all_pids_file}
+				${myobj} >> ${all_pids_file}
+				${myffgate} >> ${all_pids_file}
+
+				if [ ! -z "$all_pids" ]
+				then
+					echo "All main PAD processes were not successfully stopped so the script will kill them now."
+					for var in $all_pids
+					do
+						kill -9 $var
+					done
+				elif [ ! -z "$script_pids" ]
+				then
+					echo "All PAD script processes were not successfully stopped so the script will kill them now."
+					for svar in $script_pids
+					do
+						kill -9 $svar
+					done
+				else
+					echo "All PAD processes were successfully stopped."
+				fi
+				echo "All PAD processes have now been successfully stopped."
+			elif [ "${NCO_PA_ID}" == 'AGG_B_PA' ]
+                        then
+                                mypad=$(pidof nco_pad)
+                                myobj=$(pidof nco_objserv)
+                                mybigate=$(pidof nco_g_objserv_bi)
+                                all_pids_file="/tmp/my_pids"
+                                all_pids=$(cat $all_pids_file)
+
+                                >${all_pids_file}
+
+                                ${mypad} >> ${all_pids_file}
+                                ${myobj} >> ${all_pids_file}
+                                ${mybigate} >> ${all_pids_file}
+
+                                if [ ! -z "$all_pids" ]
+                                then
+                                        echo "All main PAD processes were not successfully stopped so the script will kill them now."
+                                        for var in $all_pids
+                                        do
+                                                kill -9 $var
+                                        done
+				else
+                                        echo "All PAD processes were successfully stopped."
+                                fi
+                                echo "All PAD processes have now been successfully stopped."
+			else
+				echo "All PAD processes have now been successfully stopped."
+			fi
+                else
+                        echo "The function killpad was not successfull."
+                fi
+                [ "$BOOTUP" != "verbose" ] && echo
+        else
+                echo "Netcool/OMNIbus : Process Control not running ..."
+        fi
+        ;;
+restart|reload)
+        $0 stop
+        $0 start
+        ;;
+*)
+        echo "Usage: /etc/init.d/nco { start | stop | restart | reload }"
+        ;;
+esac
+

@@ -40,7 +40,7 @@
     home: /home/netcool
     group: ncoadmin
     append: yes
-    password: "{{omni_pass}}"
+    password: "$6$ulGOJh6254sgt8QS$C/XftgH.MkMor2X.GbZLIlsfSHKRkHjqAANtiV0zlARH2R7m2.Kis.DICdm.45A7ntp0ImCndPutANY68.PSA/" 
   become: true
 ###########################################################
 
@@ -66,52 +66,9 @@
     recurse: yes
 ###########################################################
 
-###########################################################
-# Add Hosts entries
-###########################################################
-#- name: Add IP address of all hosts to all hosts
-#  lineinfile:
-#    dest: /etc/hosts
-#    line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname }} {{ hostvars[item].inventory_hostname_short }}"
-#    state: present
-#  with_items: "{{ groups.all }}"
-###########################################################
-
 ########################################################
 # Create Directories on remote instance
 ########################################################
-#- name: Create tmp directory for objectserver install
-#  file:
-#    path: /opt/accuoss/install/core
-#    state: directory
-#    owner: netcool
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: Create directory for Installation Manager install
-#  file:
-#    path: /opt/IBM/tmp/install/im
-#    state: directory
-#    owner: netcool
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: Create directory for Installation Manager install
-#  file:
-#    path: /opt/IBM/tmp/install/fp
-#    state: directory
-#    owner: netcool
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: Create directory for Installation Manager install
-#  file:
-#    path: /opt/IBM/tmp/install/gateway
-#    state: directory
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-
 - name: create scripts directory
   file:
     path: /opt/accuoss/omnibus/scripts
@@ -136,94 +93,25 @@
     group: ncoadmin
     mode: 0775
 
-#- name: create host config directory for gateway-agg
-#  file:
-#    path: /opt/accuoss/omnibus/configs/gateway-agg
-#    state: directory
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: create host config directory for gateway-agg
-#  file:
-#    path: /opt/accuoss/omnibus/logs/gateway-agg
-#    state: directory
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: create host config directory for gateway-ff
-#  file:
-#    path: /opt/accuoss/omnibus/configs/gateway-ff
-#    state: directory
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: create host config directory for gateway-ff
-#  file:
-#    path: /opt/accuoss/omnibus/logs/gateway-ff
-#    state: directory
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#
-#- name: create host config directory for gateway-agg
-#  file:
-#    path: /opt/accuoss/omnibus/data/gateway-ff
-#    state: directory
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
+- name: create InstallManager directory for objectserver
+  file:
+    path: /home/netcool/InstallationManager
+    state: directory
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+
+- name: create repository directory for objectserver
+  file:
+    path: /home/netcool/repository/core 
+    state: directory
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
 
 #########################################################
 ## Copy Files to remote server
 ##########################################################
-#- name: copy FLAT_FILE_GATE.map file for gate-ff
-#  copy:
-#    src: FLAT_FILE_GATE.map
-#    dest: /opt/accuoss/omnibus/configs/gateway-ff
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-#
-#- name: copy FLAT_FILE_GATE.props for gate-ff
-#  copy:
-#    src: FLAT_FILE_GATE.props
-#    dest: /opt/accuoss/omnibus/configs/gateway-ff
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy FLAT_FILE_GATE.reader.tblrep.def for gate-ff
-#  copy:
-#    src: FLAT_FILE_GATE.reader.tblrep.def
-#    dest: /opt/accuoss/omnibus/configs/gateway-ff
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-#
-#- name: copy FLAT_FILE_GATE.startup.cmd to omnibus-objectserver-primary
-#  copy:
-#    src: FLAT_FILE_GATE.startup.cmd
-#    dest: /opt/accuoss/omnibus/configs/gateway-ff
-##    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy FLAT_FILE_GATE-response.xml to omnibus-objectserver-primary
-  #copy:
-#    src: FLAT_FILE_GATE-response.xml
-#    dest: /opt/accuoss/omnibus/configs/gateway-ff
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
 - name: copy objectserver install response file
   copy:
     src: objectserver-response.xml
@@ -231,16 +119,7 @@
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: yes
-
-#- name: copy custom aggregation.sql
-#  copy:
-#    src: aggregation.sql
-#    dest: /opt/accuoss/omnibus/configs/objectserver
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
+    force: no 
 
 - name: copy
   copy:
@@ -249,25 +128,7 @@
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: yes
-
-#- name: copy omniadmin bashrc file
-#  copy:
-#    src: global_bashrc.sh
-#    dest: /tmp
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy AGG_P_PA.props
-#  copy:
-#    src: AGG_P_PA.props
-#    dest: /opt/accuoss/omnibus/configs/objectserver
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
+    force: no 
 
 - name: copy scripts to script directory
   copy:
@@ -276,7 +137,7 @@
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: yes
+    force: no 
 
 - name: copy scripts to script directory
   copy:
@@ -285,7 +146,7 @@
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: yes
+    force: no 
 
 - name: copy scripts to script directory
   copy:
@@ -294,139 +155,23 @@
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: yes
+    force: no 
 
-- name: copy scripts to configs directory
+- name: copy scripts to script directory
   copy:
-    src: omnikey
-    dest: /opt/accuoss/omnibus/configs/objectserver
+    src: omni_env.sh 
+    dest: /opt/accuoss/omnibus/scripts/
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: yes
-
-- name: copy scripts to configs directory
-  copy:
-    src: omni_pad_key
-    dest: /opt/accuoss/omnibus/configs/objectserver
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    force: yes
-
-#- name: copy scripts to script directory
-#  copy:
-#    src: get_latency.sh
-#    dest: /opt/accuoss/omnibus/scripts
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy scripts to script directory
-#  copy:
-#    src: omni_ff-journal2idb.sh
-#    dest: /opt/accuoss/omnibus/scripts
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy scripts to script directory
-#  copy:
-#    src: omni_profiler_stats2idb.sh
-#    dest: /opt/accuoss/omnibus/scripts
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-#
-#- name: copy scripts to script directory
-#  copy:
-#    src: omni_trigger_stats2idb.sh
-#    dest: /opt/accuoss/omnibus/scripts
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy scripts to script directory
-#  copy:
-#    src: omni_total_process.sh
-#    dest: /opt/accuoss/omnibus/scripts
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy scripts to script directory
-#  copy:
-#    src: omni_alarms2idb.sh
-#    dest: /opt/accuoss/omnibus/scripts
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-#
-#- name: copy sql file to add columns to the objectserver
-#  copy:
-#    src: vs_add_columns.sql
-#    dest: /opt/accuoss/omnibus/configs/objectserver
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-#
-#- name: copy sql file to add columns to the objectserver
-#  copy:
-#    src: vs_custom_triggers.sql
-#    dest: /opt/accuoss/omnibus/configs/objectserver
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy sql file to create admin user to the objectserver
-#  copy:
-#    src: vs_custom_users_and_groups.sql
-#    dest: /opt/accuoss/omnibus/configs/objectserver
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-#
-#- name: copy sql file to create admin user to the objectserver
-#  copy:
-#    src: check_omni_user.sql
-#    dest: /opt/accuoss/omnibus/configs/objectserver
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-
-#- name: copy setup_omni_env.sh to /etc/profile.d
-#  copy:
-#    src: setup_omni_env.sh
-#    dest: /etc/profile.d
-#    owner: root
-#    group: ncoadmin
-#    mode: 0777
-#    force: yes
-
-#- name: copy omni_env.sh to /opt/accuoss
-#  copy:
-#    src: omni_env.sh
-#    dest: /opt/accuoss
-#    owner: root
-#    group: ncoadmin
-#    mode: 0777
-#    force: yes
+    force: no
 ######################################################
 
 ######################################################
 # Install need yum packages
 ######################################################
 - name: Install yum packages using a list
+  become: True
   yum:
     name:
       - tar
@@ -477,45 +222,24 @@
       - bc
       - pam.i686
       - xorg-x11-xauth.x86_64
-      - x2goserver-xsession.x86_64
       - xorg-x11-apps-7.7-7.el7.x86_64
       - xterm
 
-#- name: install x11
-#  shell: "yum groupinstall -y \"X Window System\""
-
-#- name: install xauth
-#  shell: "yum install xauth -y"
-
-#- name: install xauth
-#  shell: "yum install xeyes -y"
-
-#- name: install x2go server
-#  shell: "yum -y install x2goserver-xsession"
-
-#############################################################
-# Setup x11 using playrun user and prompt setup
-#############################################################
-#- stat:
-#    path: /root/.Xauthority
-#  register: xcheck
-
-#- name: Copy .Xauthority file if not there
-#  shell: "cp /home/{{playrun_user}}/.Xauthority /root/.Xauthority"
-#  args:
-#    executable: /bin/bash
-#  when: "xcheck.stat.exists == True and playrun_user != 'jenkins'"
-
+############################################################
+# Create custom prompt
+############################################################
 - name: Set Ojectserver Prompt
   shell: "export PS1=\"\\[\\033[36m\\]\\u\\[\\033[31m\\]@\\[\\033[02;32m\\]\\H: \\[\\033[33m\\]\\w\\[\\033[0m\\]\\$\""
   args:
     executable: /bin/bash
+  become: yes
+  become_user: netcool
 ############################################################
 
-############################################################
+###########################################################
 # Installation Manager Install
-############################################################
-- stat: path=/home/netcool/IBM/InstallationManager/eclipse/tools/imcl
+###########################################################
+- stat: path=/home/netcool/IBM/eclipse/tools
   register: install_manager_path
 
 - debug: msg="The install manager is not installed so it will be installed now."
@@ -524,21 +248,21 @@
   when: install_manager_path.stat.exists == True
 
 - unarchive:
-    src: /opt/accuoss/repo/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip
-    dest: /opt/accuoss/install/im/
+    src: /opt/accuoss/software/Software/Installation_Manager/agent.installer.linux.gtk.x86_64_1.9.1003.20200730_2125.zip
+    dest: /home/netcool/InstallationManager
     remote_src: True
+  become: yes
+  become_user: netcool
   when: install_manager_path.stat.exists != True
+
+- name: Change ownership of files 
+  shell: "chown -R netcool:ncoadmin /home/netcool/InstallationManager"
 
 - name: Install IBM Install Manager
-  shell: "/opt/accuoss/im/userinstc --launcher.ini /opt/IBM/tmp/install/im/user-silent-install.ini -acceptLicense -ShowVerboseProgress"
-  become: true
+  shell: "/home/netcool/InstallationManager/userinstc --launcher.ini /home/netcool/InstallationManager/user-silent-install.ini -installationDirectory /home/netcool/IBM -acceptLicense -ShowVerboseProgress"
+  become: yes
+  become_user: netcool
   when: install_manager_path.stat.exists != True
-
-- name: Delete the zip file /opt/IBM/tmp/install/im/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip
-  shell: "rm -f /opt/accuoss/im/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip"
-  become: true
-  when: install_manager_path.stat.exists != True
-############################################################
 
 ############################################################
 # Check Objectserver DB Path
@@ -550,190 +274,35 @@
   when: objsrv_aggp_db_path.stat.exists != True
 - debug: msg="The objectserver db path was found so this step will be skipped."
   when: objsrv_aggp_db_path.stat.exists == True
-
 ############################################################
 
 ############################################################
-# Objectserver Install with FP 12
-############################################################
-#- name: Get IBM Omnibus Objectserver Core Install file
-#  uri:
-#    url: https://artifactory.accuoss.com/artifactory/maas-generic-local/OMNIbus-v8.1.0.5-Core.linux64.zip
-#    method: GET
-#    dest: /opt/IBM/tmp/install/core/OMNIbus-v8.1.0.5-Core.linux64.zip
-#    user: nms_exede_ci-cd
-#    password: AKCp2UNConPgDX6sZnkAoRQ1N8Qevm71RrHsTg86kEuC2BaYyeZfrhuRJX6StuSjUgaPNk5Hf
-#    force_basic_auth: yes
-#    status_code: 200,304
-#    creates: /opt/IBM/tmp/install/core/OMNIbus-v8.1.0.5-Core.linux64.zip
-#    timeout: 300
-#  when: objsrv_aggp_db_path.stat.exists != True
-
-#- name: Get ObjectServer FP12 Install file
-#  uri:
-#    url: https://artifactory.accuoss.com/artifactory/maas-generic-local/8.1.0-TIV-NCOMNIbus-Linux-FP0012.zip
-#    method: GET
-#    dest: /opt/IBM/tmp/install/fp/8.1.0-TIV-NCOMNIbus-Linux-FP0012.zip
-#    user: nms_exede_ci-cd
-#    password: AKCp2UNConPgDX6sZnkAoRQ1N8Qevm71RrHsTg86kEuC2BaYyeZfrhuRJX6StuSjUgaPNk5Hf
-#    force_basic_auth: yes
-#    status_code: 200,304
-#    creates: /opt/IBM/tmp/install/fp/8.1.0-TIV-NCOMNIbus-Linux-FP0012.zip
-#    timeout: 300
-#  when: objsrv_aggp_db_path.stat.exists != True
-
+## Objectserver Install
+#############################################################
 - unarchive:
-    src: /opt/accuoss/repo/OMNIbus-v8.1.0.5-Core.linux64.zip
-    dest: /opt/accuoss/core/
+    src: /opt/accuoss/software/Software/NOI/OMNIbus/TVL_NTCL_OMN_V8.1.0.24_CORE_LNX.zip
+    dest: /home/netcool/repository/core
     remote_src: True
+  become_user: netcool
+  become: yes
+  become_method: enable
   when: objsrv_aggp_db_path.stat.exists != True
 
-- unarchive:
-    src: /opt/IBM/tmp/install/fp/8.1.0-TIV-NCOMNIbus-Linux-FP0012.zip
-    dest: /opt/accuoss/fp/
-    remote_src: True
+- name: Install IBM Omnibus ObjectServer
+  shell: "touch /home/netcool/repository/core/objectserver_install.log; /home/netcool/IBM/eclipse/tools/imcl -input /opt/accuoss/omnibus/configs/objectserver/objectserver-response.xml -silent -nosplash -acceptlicense -ShowVerboseProgress -log /home/netcool/repository/core/objectserver_install.log"
+  become: yes
+  become_user: netcool
   when: objsrv_aggp_db_path.stat.exists != True
-
-- name: Install IBM Omnibus ObjectServer with Fixpack 12
-  shell: "touch /home/netcool/objectserver_w_fp12_install.log; /home/netcool/IBM/InstallationManager/eclipse/tools/imcl -input /opt/accuoss/omnibus/configs/objectserver/objectserver-response.xml -silent -nosplash -acceptlicense -ShowVerboseProgress -log /home/netcool/objectserver_w_fp12_install.log"
-  become: true
-  when: objsrv_aggp_db_path.stat.exists != True
-
-- name: Delete the zip file /opt/IBM/tmp/install/core/OMNIbus-v8.1.0.5-Core.linux64.zip
-  shell: "rm -f /opt/IBM/tmp/install/core/OMNIbus-v8.1.0.5-Core.linux64.zip"
-  become: true
-  when: objsrv_aggp_db_path.stat.exists != True
-
-- name: Delete the zip file
-  shell: "rm -f /opt/accuoss/fp/8.1.0-TIV-NCOMNIbus-Linux-FP0012.zip"
-  become: true
-  when: objsrv_aggp_db_path.stat.exists != True
-#############################################################
-
-- name: Install PAD script
-  shell: "rm -f /etc/init.d/nco"
-  become: true
-
-#############################################################
-# templates files
-#############################################################
-- name: Push templated make_host_file.sh file to /opt/accuoss/omnibus/configs/objectserver
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/make_host_file.j2
-    dest: /opt/accuoss/omnibus/configs/objectserver/make_host_file.sh
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated AGG_X_PA_conf.j2 file to /opt/accuoss/omnibus/configs/objectserver
-  template:
-    src: roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/templates/AGG_X_PA_conf.j2
-    dest: /opt/accuoss/omnibus/configs/objectserver/AGG_P_PA.conf
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated AGG_X_PA_props.j2 file to /opt/accuoss/omnibus/configs/objectserver
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/AGG_X_PA_props.j2
-    dest: /opt/accuoss/omnibus/configs/objectserver/AGG_P_PA.props
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated AGG_X.j2 file to /opt/accuoss/omnibus/configs/objectserver
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/AGG_X.j2
-    dest: /opt/accuoss/omnibus/configs/objectserver/AGG_P.props
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated common_nco.j2 file to /opt/accuoss/omnibus/configs/objectserver
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/common_nco.j2
-    dest: /etc/init.d/nco
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated common_omni.j2 file to /opt/IBM/tivoli/netcool/etc/omni.dat
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/common_omni.j2
-    dest: /opt/IBM/tivoli/netcool/etc/omni.dat
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    backup: yes
-
-- name: Push templated common_omni.j2 file to /opt/IBM/tivoli/netcool/omnibus/etc/omni.dat
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/common_omni.j2
-    dest: /opt/IBM/tivoli/netcool/omnibus/etc/omni.dat
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    backup: yes
-
-- name: Push templated common_omni.j2 file to /opt/accuoss/omnibus/configs/objectserver/omni.dat
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/common_omni.j2
-    dest: /opt/accuoss/omnibus/configs/objectserver/omni.dat
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated omniadmin.j2 file to /opt/accuoss/omnibus/scripts
-  template:
-    src: roles/ansible-omnibus-objectserver-agg-base-install/templates/omniadmin.j2
-    dest: /opt/accuoss/omnibus/scripts/omniadmin.sh
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-- name: Push templated bashrc.j2 file to /home/netcool/.bashrc
-  template:
-    src: roles/ansible-omnibus-objectserver-ha-agg-primary-deploy/templates/bashrc.j2
-    dest: /home/netcool/.bashrc
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-
-###################################################################
-
-##################################################################
-# Copy AGG_GATE.tblrep.def file to /opt/IBM/tivoli/netcool/omnibus/etc
-##################################################################
-#- name: copy AGG_GATE.tblrep.def file to /opt/IBM/tivoli/netcool/omnibus/etc
-#  copy:
-#    src: AGG_GATE.tblrep.def
-#    dest: /opt/IBM/tivoli/netcool/omnibus/etc/AGG_GATE.tblrep.def
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-##################################################################
 
 ##################################################################
 # Run Script to make hosts file
 ##################################################################
-- name: Create /etc/hosts file
-  shell: "cd /opt/accuoss/omnibus/configs/objectserver && ./make_host_file.sh"
-  become: true
+#- name: Create /etc/hosts file
+#  shell: "cd /opt/accuoss/omnibus/configs/objectserver && ./make_host_file.sh"
+#  become_user: netcool
+#  become: yes
+#  become_method: enable
 ##################################################################
-
-##################################################################
-# Copy the AGG BI-GATE (failover) table replication file
-##################################################################
-#- name: copy AGG_GATE.tblrep.def file to /opt/IBM/tivoli/netcool/omnibus/etc
-#  copy:
-#    src: AGG_GATE.tblrep.def
-#    dest: /opt/IBM/tivoli/netcool/omnibus/etc/AGG_GATE.tblrep.def
-#    owner: root
-#    group: ncoadmin
-#    mode: 0775
-#    force: yes
-###################################################################
 
 ###################################################################
 # Check Objectserver DB Path
@@ -752,16 +321,10 @@
 ##################################################################
 - name: Create the objectserver DB
   shell: "/opt/IBM/tivoli/netcool/omnibus/bin/nco_dbinit -server AGG_P -force -customconfigfile /opt/IBM/tivoli/netcool/omnibus/extensions/multitier/objectserver/aggregation.sql,/opt/accuoss/omnibus/configs/objectserver/vs_custom_users_and_groups.sql,/opt/accuoss/omnibus/configs/objectserver/vs_add_columns.sql,/opt/accuoss/omnibus/configs/objectserver/vs_custom_triggers.sql"
-  become: true
+  become_user: netcool
+  become: yes
+  become_method: enable
   when: objsrv_aggp_db_path.stat.exists != True
-##################################################################
-
-##################################################################
-# Run nco_igen
-##################################################################
-- name: Create the objectserver DB
-  shell: "/opt/IBM/tivoli/netcool/bin/nco_igen -in /opt/accuoss/omnibus/configs/objectserver/omni.dat"
-  become: true
 ##################################################################
 
 ##################################################################
@@ -774,6 +337,92 @@
   when: nco_startup_path.stat.exists != True
 - debug: msg="The nco startup path /etc/init.d/nco was found so this step will be skipped."
   when: nco_startup_path.stat.exists == True
+
+#########################################################
+### Copy Files to remote server
+###########################################################
+- name: copy nco script to /opt/init.d 
+  copy:
+    src: segra_files/nco
+    dest: /etc/init.d
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy omni.dat file to all needed locations 
+  copy:
+    src: segra_files/omni.dat
+    dest: /opt/IBM/tivoli/netcool/etc 
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy omni.dat file to all needed locations
+  copy:
+    src: segra_files/omni.dat
+    dest: /opt/IBM/tivoli/netcool/omnibus/etc
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy omni.dat file to all needed locations
+  copy:
+    src: segra_files/omni.dat
+    dest: /opt/accuoss/omnibus/configs/objectserver 
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy AGG_P_PA.props to needed locations 
+  copy:
+    src: segra_files/AGG_P_PA.props
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy AGG_P_PA.conf to needed locations
+  copy:
+    src: segra_files/AGG_P_PA.conf
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy AGG_P_PA.conf to needed locations
+  copy:
+    src: segra_files/AGG_P.props
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+#############################################################
+
+#############################################################
+# Run Script to make .bashrc entries 
+#############################################################
+- name: Create ~/.bashrc file
+  shell: "/opt/accuoss/omnibus/scripts/omni_env.sh perm"
+  become: yes
+  become_user: netcool
+#############################################################
+
+#############################################################
+# Run nco_igen
+#############################################################
+- name: Run nco_igen
+  shell: "/opt/IBM/tivoli/netcool/bin/nco_igen -in /opt/accuoss/omnibus/configs/objectserver/omni.dat"
+  become: yes
+  become_user: netcool
+#############################################################
+
 
 #- name: Install nco startup file if it does not exist
 #  shell: "cp /opt/accuoss/omnibus/configs/objectserver/nco /etc/init.d/; /sbin/chkconfig --add nco > /dev/null; systemctl daemon-reload"
@@ -807,25 +456,14 @@
 #  debug: var=install_bashrc
 ###############################################################
 
-##############################################################
-## Install Specific version of filebeat
-###############################################################
-#- name: install specific version of filebeat
-#  yum:
-#    name: filebeat-6.3.0-1.x86_64
-#    state: present
-
-#- name: install filebeat
-#  shell: "yum install filebeat-6.3.0-1.x86_64 -y"
-#  become: true
-###############################################################
-
 ###############################################################
 # Check to see if PAD process is already running
 ###############################################################
 - name: Check status of PAD process
   shell: "ps -ef|grep nco_pad|grep -v grep|cut -d' ' -f24|cut -d'/' -f10"
-  become: true
+  become_user: netcool
+  become: yes
+  become_method: enable
   register: pad_status
 
 - name: Debug PAD Status
@@ -837,35 +475,21 @@
 ##############################################################
 - name: Check status of objectserver process
   shell: "ps -ef|grep nco_objserv|grep -v grep|cut -d' ' -f20|cut -d'/' -f10"
-  become: true
+  become_user: netcool
+  become: yes
+  become_method: enable
   register: objsrv_status
 
 - name: Debug Objectserver Process Status
   debug: var=objsrv_status.stdout
 ##############################################################
 
-##############################################################
-# Check status of objectserver bi gateway process
-##############################################################
-#- name: Check status of objectserver bi gateway process
-#  shell: "ps -ef|grep nco_g_objserv_bi|grep -v grep|cut -d' ' -f20|cut -d'/' -f10"
-#  become: true
-#  register: bi_gate_status
-#
-#- name: Debug AGG Gate (failover) Process Status
-#  debug: var=bi_gate_status.stdout
 ########################################################
-
+# Set permissions on files for netcool
 ########################################################
-# Set permissions on files for omniadmin
-########################################################
-#- name: Set permissions for omniadmin on omnibus files
-#  shell: "setfacl -Rm u:omniadmin:rwX /opt; setfacl -m u:omniadmin:rwX /etc/init.d/nco"
-#  become: true
-#
-#- name: Set permissions for omniadmin on omnibus files
-#  shell: "setfacl -m u:omniadmin:r /etc/shadow; setfacl -m u:omniadmin:r /etc/passwd; setfacl -m u:omniadmin:r /etc/group; "
-#  become: true
+- name: Set permissions for netcool on omnibus files
+  shell: "setfacl -m u:netcool:rwX /etc/shadow && setfacl -m u:netcool:rwX /etc/init.d/nco && setfacl -m u:netcool:r /etc/passwd && setfacl -m u:netcool:r /etc/group"
+  become: true
 ########################################################
 
 ########################################################
@@ -873,25 +497,26 @@
 ########################################################
 - name: Run Startup script
   shell: "/etc/init.d/nco start"
-  become: true
+  become: yes
+  become_user: netcool
   environment:
       OMNIHOME: /opt/IBM/tivoli/netcool/omnibus
       NCHOME: /opt/IBM/tivoli/netcool
   register: nco_start
-#  when: pad_status.stdout != 'nco_pad'
+  when: pad_status.stdout != 'nco_pad'
 
 - name: Debug NCO Start
   debug: var=nco_start.stdout
-#  when: pad_status.stdout != 'nco_pad'
+  when: pad_status.stdout != 'nco_pad'
 ########################################################
 
 ########################################################
 # Stop PAD and all processes using startup script
 ########################################################
-- name: Stop the probe using nco stop / nco start
-  service:
-    name: nco
-    state: stopped
+#- name: Stop the probe using nco stop / nco start
+#  service:
+#    name: nco
+#    state: stopped
 
 #- name: Stop PAD
 #  shell: "source /home/omniadmin/.bashrc && /etc/init.d/nco stop"
@@ -908,10 +533,10 @@
 ########################################################
 # Start PAD and all processes using startup script
 ########################################################
-- name: Restart the probe using nco stop / nco start
-  service:
-    name: nco
-    state: started
+#- name: Restart the probe using nco stop / nco start
+#  service:
+#    name: nco
+#    state: started
 
 #- name: Start PAD
 #  shell: "source /home/omniadmin/bashrc; /etc/init.d/nco start"

@@ -1,0 +1,10 @@
+[AGG_P]
+{
+	Primary:	segra-objectserver 4100
+}
+
+[AGG_P_PA]
+{
+	Primary:	segra-objectserver 4200
+}
+

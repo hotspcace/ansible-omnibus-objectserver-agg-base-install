@@ -18,7 +18,7 @@ then
 fi
 GETHOST=$(hostname -f|cut -d"." -f2)
 MYENVIRONMENT=${GETHOST^^}
-BASHFILE="/home/$USER/.bashrc"
+BASHFILE="/home/netcool/.bashrc"
 echo "$BASHFILE"
 if [ "$1" == 'perm' ]
 then

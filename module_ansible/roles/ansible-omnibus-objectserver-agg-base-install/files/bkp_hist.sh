@@ -12,7 +12,7 @@
 #
 
 KEEP=10000
-BASH_HIST=~/.bash_history
+BASH_HIST=/home/netcool/.bash_history
 BACKUP=$BASH_HIST.$(date +%y%m)
 
 if [ -s "$BASH_HIST" -a "$BASH_HIST" -nt "$BACKUP" ]; then

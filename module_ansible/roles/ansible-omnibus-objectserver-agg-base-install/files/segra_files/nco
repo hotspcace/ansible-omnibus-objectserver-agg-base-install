@@ -181,7 +181,7 @@ case "$1" in
                                         [ "$BOOTUP" != "verbose" ] && echo -n "Netcool/OMNIbus : Starting Process Control ..."
                                         if [ "$SECURE" = "Y" ]; then
                                                 #${OMNIHOME}/bin/nco_pad -name ${NCO_PA_ID} -authenticate PAM -secure > /dev/null 2> /dev/null
-						su - netcool -c "/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P_PA - authenticate UNIX -secure > /dev/null 2> /dev/null"
+						/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P_PA -propsfile ${CONFIGSHOME}/AGG_P_PA.props -configfile ${CONFIGSHOME}/AGG_P_PA.conf -authenticate UNIX -secure > /dev/null 2> /dev/null"
 					else
 						/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P_PA -propsfile ${CONFIGSHOME}/AGG_P_PA.props -configfile ${CONFIGSHOME}/AGG_P_PA.conf > /dev/null 2> /dev/null
 						#/opt/IBM/tivoli/netcool/omnibus/bin/nco_pad -name AGG_P -DNS 10.160.100.119 -propsfile ${CONFIGSHOME}/AGG_P_PA.props - authenticate UNIX -user netcool -password n3tc00l > /dev/null 2> /dev/null

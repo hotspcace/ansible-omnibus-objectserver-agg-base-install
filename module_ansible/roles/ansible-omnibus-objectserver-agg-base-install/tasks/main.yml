@@ -114,16 +114,19 @@
 ##########################################################
 - name: copy objectserver install response file
   copy:
-    src: objectserver-response.xml
-    dest: /opt/accuoss/omnibus/configs/objectserver/objectserver-response.xml
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/objectserver-response.xml
+    remote_src: true 
+    dest: /opt/accuoss/omnibus/configs/objectserver
     owner: netcool
     group: ncoadmin
     mode: 0775
-    force: no 
+    force: yes 
 
 - name: copy
   copy:
-    src: get_objsrv_props.sql
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/get_objsrv_props.sql
+    remote_src: true 
+    #src: get_objsrv_props.sql
     dest: /opt/accuoss/omnibus/configs/objectserver
     owner: netcool
     group: ncoadmin
@@ -132,7 +135,9 @@
 
 - name: copy scripts to script directory
   copy:
-    src: mkbk.sh
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/mkbk.sh
+    remote_src: true 
+    #src: mkbk.sh
     dest: /opt/accuoss/omnibus/scripts
     owner: netcool
     group: ncoadmin
@@ -141,7 +146,9 @@
 
 - name: copy scripts to script directory
   copy:
-    src: pamanager.sh
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/pamanager.sh
+    remote_src: true 
+    #src: pamanager.sh
     dest: /opt/accuoss/omnibus/scripts
     owner: netcool
     group: ncoadmin
@@ -150,7 +157,8 @@
 
 - name: copy scripts to script directory
   copy:
-    src: bkp_hist.sh
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/bkp_hist.sh
+    remote_src: true 
     dest: /opt/accuoss/omnibus/scripts/
     owner: netcool
     group: ncoadmin
@@ -159,12 +167,73 @@
 
 - name: copy scripts to script directory
   copy:
-    src: omni_env.sh 
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/omni_env.sh    
+    remote_src: true 
     dest: /opt/accuoss/omnibus/scripts/
     owner: netcool
     group: ncoadmin
     mode: 0775
     force: no
+
+- name: copy nco script to /opt/init.d
+  copy:
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/nco
+    remote_src: true 
+    dest: /etc/init.d
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy omni.dat file to all needed locations
+  copy:
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/omni.dat
+    remote_src: true 
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy AGG_P_PA.props to needed locations
+  copy:
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/AGG_P_PA.props
+    remote_src: true 
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy AGG_P_PA.conf to needed locations
+  copy:
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/AGG_P_PA.conf
+    remote_src: true 
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy AGG_P.props to needed locations
+  copy:
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/AGG_P.props
+    remote_src: true 
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
+
+- name: copy omni_env.sh to needed locations
+  copy:
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/omni_env.sh
+    remote_src: true
+    dest: /opt/accuoss/omnibus/configs/objectserver
+    owner: netcool
+    group: ncoadmin
+    mode: 0775
+    force: yes
 ######################################################
 
 ######################################################
@@ -288,8 +357,16 @@
   become_method: enable
   when: objsrv_aggp_db_path.stat.exists != True
 
+#############################################################
+# Change ownership on omnibus repo directory 
+#############################################################
+- name: Change ownership of omnibus repository
+  shell: "chown -R netcool:ncoadmin /home/netcool/repository/core"
+#############################################################
+
+
 - name: Install IBM Omnibus ObjectServer
-  shell: "touch /home/netcool/repository/core/objectserver_install.log; /home/netcool/IBM/eclipse/tools/imcl -input /opt/accuoss/omnibus/configs/objectserver/objectserver-response.xml -silent -nosplash -acceptlicense -ShowVerboseProgress -log /home/netcool/repository/core/objectserver_install.log"
+  shell: "touch /home/netcool/repository/core/objectserver_install.log; /home/netcool/IBM/eclipse/tools/imcl -input /opt/accuoss/software/Software/CustomerFiles/Segra/objectserver-response.xml -silent -nosplash -acceptlicense -ShowVerboseProgress -log /home/netcool/repository/core/objectserver_install.log"
   become: yes
   become_user: netcool
   when: objsrv_aggp_db_path.stat.exists != True
@@ -320,11 +397,14 @@
 # Create DB if it does not exist
 ##################################################################
 - name: Create the objectserver DB
-  shell: "/opt/IBM/tivoli/netcool/omnibus/bin/nco_dbinit -server AGG_P -force -customconfigfile /opt/IBM/tivoli/netcool/omnibus/extensions/multitier/objectserver/aggregation.sql,/opt/accuoss/omnibus/configs/objectserver/vs_custom_users_and_groups.sql,/opt/accuoss/omnibus/configs/objectserver/vs_add_columns.sql,/opt/accuoss/omnibus/configs/objectserver/vs_custom_triggers.sql"
+  shell: "/opt/IBM/tivoli/netcool/omnibus/bin/nco_dbinit -server AGG_P -alertsdatafile /opt/accuoss/software/Software/CustomerFiles/Segra/alertsdata.sql -applicationfile /opt/accuoss/software/Software/CustomerFiles/Segra/application.sql -automationfile /opt/accuoss/software/Software/CustomerFiles/Segra/automation.sql -systemfile /opt/accuoss/software/Software/CustomerFiles/Segra/system.sql -desktopfile /opt/accuoss/software/Software/CustomerFiles/Segra/desktop.sql"
   become_user: netcool
   become: yes
   become_method: enable
   when: objsrv_aggp_db_path.stat.exists != True
+
+- name: Change ownership of omnibus repository
+  shell: "chown -R netcool:ncoadmin /opt/IBM/tivoli/netcool/omnibus/db"
 ##################################################################
 
 ##################################################################
@@ -341,19 +421,11 @@
 #########################################################
 ### Copy Files to remote server
 ###########################################################
-- name: copy nco script to /opt/init.d 
+- name: copy omni.dat file to all needed locations
   copy:
-    src: segra_files/nco
-    dest: /etc/init.d
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    force: yes
-
-- name: copy omni.dat file to all needed locations 
-  copy:
-    src: segra_files/omni.dat
-    dest: /opt/IBM/tivoli/netcool/etc 
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/omni.dat
+    remote_src: true 
+    dest: /opt/IBM/tivoli/netcool/etc
     owner: netcool
     group: ncoadmin
     mode: 0775
@@ -361,44 +433,9 @@
 
 - name: copy omni.dat file to all needed locations
   copy:
-    src: segra_files/omni.dat
+    src: /opt/accuoss/software/Software/CustomerFiles/Segra/omni.dat
+    remote_src: true 
     dest: /opt/IBM/tivoli/netcool/omnibus/etc
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    force: yes
-
-- name: copy omni.dat file to all needed locations
-  copy:
-    src: segra_files/omni.dat
-    dest: /opt/accuoss/omnibus/configs/objectserver 
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    force: yes
-
-- name: copy AGG_P_PA.props to needed locations 
-  copy:
-    src: segra_files/AGG_P_PA.props
-    dest: /opt/accuoss/omnibus/configs/objectserver
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    force: yes
-
-- name: copy AGG_P_PA.conf to needed locations
-  copy:
-    src: segra_files/AGG_P_PA.conf
-    dest: /opt/accuoss/omnibus/configs/objectserver
-    owner: netcool
-    group: ncoadmin
-    mode: 0775
-    force: yes
-
-- name: copy AGG_P_PA.conf to needed locations
-  copy:
-    src: segra_files/AGG_P.props
-    dest: /opt/accuoss/omnibus/configs/objectserver
     owner: netcool
     group: ncoadmin
     mode: 0775
@@ -409,7 +446,7 @@
 # Run Script to make .bashrc entries 
 #############################################################
 - name: Create ~/.bashrc file
-  shell: "/opt/accuoss/omnibus/scripts/omni_env.sh perm"
+  shell: "cd /opt/accuoss/omnibus/configs/objectserver && ./omni_env.sh perm"
   become: yes
   become_user: netcool
 #############################################################

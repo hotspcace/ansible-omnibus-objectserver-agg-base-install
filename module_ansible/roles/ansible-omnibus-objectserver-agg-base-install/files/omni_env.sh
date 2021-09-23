@@ -107,7 +107,7 @@ then
                 echo "alias tailsstop='tail -f /opt/IBM/JazzSM/profile/logs/server1/stopServer.log'" >> ${BASHFILE}
                 echo "alias tailsstatus='tail -f /opt/IBM/JazzSM/profile/logs/server1/serverStatus.log'" >> ${BASHFILE}
 
-        elif [[ "$MYHOST" =~ segra-objectserver ]]
+        elif [[ "$MYHOST" =~ agg-primary ]]
         then
                 echo "## Primary ObjectServer (AGG_P)" >> ${BASHFILE}
                 echo "#--------" >> ${BASHFILE}
@@ -116,7 +116,7 @@ then
                 echo "export NCO_PA_ID CONFIGSHOME" >> ${BASHFILE}
                 echo " " >> ${BASHFILE}
                 echo "alias admintool='/opt/IBM/tivoli/netcool/omnibus/bin/nco_config'" >> ${BASHFILE}
-		echo "alias getobjprops=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_sql -server AGG_P -user netcool -password 'ECBBBJAGFKBIGD' < /opt/accuoss/omnibus/configs/objectserver/get_objsrv_props.sql\"" >> ${BASHFILE}
+		echo "alias getobjprops=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_sql -server AGG_P -user omniadmin -password 'ECBBBJAGFKFHGD' < /opt/accuoss/omnibus/configs/objectserver/get_objsrv_props.sql\"" >> ${BASHFILE}
                 echo "alias tailsmlog='tail -f /opt/IBM/tivoli/netcool/omnibus/log/AGG_P_selfmonitoring.log1'" >> ${BASHFILE}
                 echo "alias tailsmlog='tail -f /opt/IBM/tivoli/netcool/omnibus/log/AGG_P_trigger_stats.log1'" >> ${BASHFILE}
                 echo "alias tailaudsql='tail -f /opt/IBM/tivoli/netcool/omnibus/log/AGG_P_audit_sql.log_01'" >> ${BASHFILE}
@@ -138,7 +138,7 @@ then
                 echo "export NCO_PA_ID CONFIGSHOME" >> ${BASHFILE}
                 echo " " >> ${BASHFILE}
                 echo "alias admintool='/opt/IBM/tivoli/netcool/omnibus/bin/nco_config'" >> ${BASHFILE}
-		echo "alias getobjprops=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_sql -server AGG_B -user netcool -password 'ECBBBJAGFKBIGD' < /opt/accuoss/omnibus/configs/objectserver/get_objsrv_props.sql\"" >> ${BASHFILE}
+		echo "alias getobjprops=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_sql -server AGG_B -user omniadmin -password 'ECBBBJAGFKFHGD' < /opt/accuoss/omnibus/configs/objectserver/get_objsrv_props.sql\"" >> ${BASHFILE}
                 echo "alias tailaggg='tail -f /opt/IBM/tivoli/netcool/omnibus/log/AGG_GATE.log'" >> ${BASHFILE}
                 echo "alias tailaggb='tail -f /opt/IBM/tivoli/netcool/omnibus/log/AGG_B.log_01'" >> ${BASHFILE}
                 echo "alias tailaggbpa='tail -f /opt/IBM/tivoli/netcool/omnibus/log/AGG_B_PA.log'" >> ${BASHFILE}
@@ -215,15 +215,15 @@ then
 
         echo "alias mkbk='/export/home/nmsadmin/mkbk.sh'" >> ${BASHFILE}
         echo "alias ncoevent='/opt/IBM/tivoli/netcool/omnibus/bin/nco_event'" >> ${BASHFILE}
-        echo "alias ncoevents=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_event -server AGG_V -username -user netcool -password 'ECBBBJAGFKBIGD' -elc '/home/netcool/netcool.elc'\"" >> ${BASHFILE}
+        echo "alias ncoevents=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_event -server AGG_V -username -user omniadmin -password 'ECBBBJAGFKFHGD' -elc '/home/omniadmin/omniadmin.elc'\"" >> ${BASHFILE}
         echo "alias ncoid='/opt/IBM/tivoli/netcool/omnibus/bin/nco_id'" >> ${BASHFILE}
         echo "alias ncoidv='/opt/IBM/tivoli/netcool/omnibus/bin/nco_id -v'" >> ${BASHFILE}
         echo "alias ncoidc=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_id -v|grep ' Name: .*)'\"" >> ${BASHFILE}
-        echo "alias ncosql=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_sql -user netcool -password 'ECBBBJAGFKBIGD' -server AGG_P\"" >> ${BASHFILE}
+        echo "alias ncosql=\"/opt/IBM/tivoli/netcool/omnibus/bin/nco_sql -user omniadmin -password 'ECBBBJAGFKFHGD' -server AGG_P\"" >> ${BASHFILE}
         echo "alias ncopadhist='history | grep nco_pad'" >> ${BASHFILE}
         echo "alias ncosqlhist='history | grep nco_sql'" >> ${BASHFILE}
         echo "alias versionreport='/opt/IBM/tivoli/netcool/bin/nco_id -o /opt/accuoss/omnibus/scripts/VersionInformation.html'" >> ${BASHFILE}
-        echo "alias pastatus='nco_pa_status -server \${NCO_PA_ID} -user netcool -password \"ECBBBJAGFKBIGD\"'" >> ${BASHFILE}
+        echo "alias pastatus='nco_pa_status -server \${NCO_PA_ID} -user omniadmin -password \"ECBBBJAGFKFHGD\"'" >> ${BASHFILE}
         echo "alias pamanager='/opt/accuoss/omnibus/scripts/pamanager.sh'" >> ${BASHFILE}
         echo "alias startpad='/etc/init.d/nco start'" >> ${BASHFILE}
         echo "alias stoppad='/etc/init.d/nco stop'" >> ${BASHFILE}

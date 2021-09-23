@@ -17,7 +17,7 @@ then
                 NCO_PA="WEBGUI"
                 CONFIGSHOME=/opt/accuoss/omnibus/configs/webgui
 
-        elif [[ "$MYHOST" =~ agg-primary ]]
+        elif [[ "$MYHOST" =~ segra-objectserver ]]
         then
                 NCO_PA="AGG_P_PA"
                 CONFIGSHOME=/opt/accuoss/omnibus/configs/objectserver
@@ -127,7 +127,7 @@ pamanager()
 }
 omnibusstatus()
 {
-        /opt/IBM/tivoli/netcool/omnibus/bin/nco_pa_status -server ${NCO_PA_ID} -user root -password "ECBBBJAGFKFHGD" &> pastatus.$$
+        /opt/IBM/tivoli/netcool/omnibus/bin/nco_pa_status -server AGG_P_PA -user netcool -password "ECBBBJAGFKBIGD" &> pastatus.$$
         dialog --ascii-lines --backtitle "OMNIBUS ADMINISTRATOR" --title "OMNIBUS PROCESS STATUS" --textbox pastatus.$$ 0 0
         rm -f pastatus.*
 }
